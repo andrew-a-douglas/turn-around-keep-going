@@ -83,6 +83,7 @@
         let moveCount = 0;
         let lastDirection = null;
         let bestScore = Infinity;
+        let gameStarted = false;
 
         // DOM Elements
         const movesDisplay = document.getElementById('moves');
@@ -115,6 +116,7 @@
             osc2.connect(audioCtx.destination);
             osc1.start();
             osc2.start();
+            console.log("Tones playing: Tone 1 =", TONE_1_FREQ, "Tone 2 =", tone2Freq);
         }
 
         function stopTones() {
@@ -122,6 +124,7 @@
             if (osc2) osc2.stop();
             osc1 = null;
             osc2 = null;
+            console.log("Tones stopped");
         }
 
         function checkWin() {
@@ -133,6 +136,7 @@
                     bestScoreDisplay.textContent = bestScore;
                 }
                 disableControls(true);
+                gameStarted = false;
             }
         }
 
@@ -143,18 +147,22 @@
             makeMoveBigBtn.disabled = disable;
             makeMoveMediumBtn.disabled = disable;
             makeMoveTinyBtn.disabled = disable;
+            console.log("Controls disabled:", disable);
         }
 
         // Game Logic
         function startGame() {
             playTones();
+            gameStarted = true;
             makeMoveBigBtn.disabled = false;
             makeMoveMediumBtn.disabled = false;
             makeMoveTinyBtn.disabled = false;
-            // Keep control matrix disabled until a move is made
+            console.log("Game started, Make a Move buttons enabled");
+            // Control matrix remains disabled until a move is made
         }
 
         function makeMove(size) {
+            if (!gameStarted) return; // Prevent moves before game starts
             const direction = Math.random() < 0.5 ? 'up' : 'down';
             const amount = randomRange(
                 size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
@@ -172,9 +180,11 @@
             }
             disableControls(false); // Enable control matrix
             checkWin();
+            console.log("Move made:", size, "New Tone 2 =", tone2Freq);
         }
 
         function adjustTone(action, size) {
+            if (!gameStarted) return; // Prevent adjustments before game starts
             const amount = randomRange(
                 size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
                 size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
@@ -191,6 +201,7 @@
                 osc2.frequency.value = tone2Freq; // Update live tone
             }
             checkWin();
+            console.log("Adjusted:", action, size, "New Tone 2 =", tone2Freq);
         }
 
         function resetGame() {
@@ -198,12 +209,11 @@
             tone2Freq = Math.floor(Math.random() * 11) + 435;
             moveCount = 0;
             lastDirection = null;
-            makeMoveBigBtn.disabled = true;
-            makeMoveMediumBtn.disabled = true;
-            makeMoveTinyBtn.disabled = true;
+            gameStarted = false;
             disableControls(true);
             updateDisplay();
             messageDisplay.textContent = '';
+            console.log("Game reset");
         }
 
         // Event Listeners
@@ -223,9 +233,6 @@
         // Initial Setup
         updateDisplay();
         disableControls(true); // Disable all controls initially
-        makeMoveBigBtn.disabled = true;
-        makeMoveMediumBtn.disabled = true;
-        makeMoveTinyBtn.disabled = true;
     </script>
 </body>
 </html>
