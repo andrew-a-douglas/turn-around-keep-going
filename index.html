@@ -150,6 +150,13 @@
             console.log("Controls disabled:", disable);
         }
 
+        function disableMakeMoveButtons() {
+            makeMoveBigBtn.disabled = true;
+            makeMoveMediumBtn.disabled = true;
+            makeMoveTinyBtn.disabled = true;
+            console.log("Make a Move buttons disabled");
+        }
+
         // Game Logic
         function startGame() {
             playTones();
@@ -171,14 +178,14 @@
             tone2Freq += (direction === 'up' ? amount : -amount);
             lastDirection = direction;
             moveCount = 1;
-            makeMoveBigBtn.disabled = true;
-            makeMoveMediumBtn.disabled = true;
-            makeMoveTinyBtn.disabled = true;
+            disableMakeMoveButtons(); // Disable all Make a Move buttons
             updateDisplay();
             if (osc1 && osc2) {
                 osc2.frequency.value = tone2Freq; // Update live tone
             }
-            disableControls(false); // Enable control matrix
+            document.querySelectorAll('.control-matrix button').forEach(btn => {
+                btn.disabled = false; // Enable control matrix
+            });
             checkWin();
             console.log("Move made:", size, "New Tone 2 =", tone2Freq);
         }
@@ -223,12 +230,12 @@
         makeMoveMediumBtn.addEventListener('click', () => makeMove('Medium'));
         makeMoveTinyBtn.addEventListener('click', () => makeMove('Tiny'));
 
-        document.getElementById('keepBig').addEventListener('click', () => adjustTone('Keep Going', 'Big'));
-        document.getElementById('keepMedium').addEventListener('click', () => adjustTone('Keep Going', 'Medium'));
-        document.getElementById('keepTiny').addEventListener('click', () => adjustTone('Keep Going', 'Tiny'));
-        document.getElementById('turnBig').addEventListener('click', () => adjustTone('Turn Around', 'Big'));
-        document.getElementById('turnMedium').addEventListener('click', () => adjustTone('Turn Around', 'Medium'));
-        document.getElementById('turnTiny').addEventListener('click', () => adjustTone('Turn Around', 'Tiny'));
+        document.getElementById('keepBig').addEventListener('click', () => adjustTone('Keep Going', "Big"));
+        document.getElementById('keepMedium').addEventListener('click', () => adjustTone('Keep Going', "Medium"));
+        document.getElementById('keepTiny').addEventListener('click', () => adjustTone('Keep Going', "Tiny"));
+        document.getElementById('turnBig').addEventListener('click', () => adjustTone('Turn Around', "Big"));
+        document.getElementById('turnMedium').addEventListener('click', () => adjustTone('Turn Around', "Medium"));
+        document.getElementById('turnTiny').addEventListener('click', () => adjustTone('Turn Around', "Tiny"));
 
         // Initial Setup
         updateDisplay();
