@@ -35,6 +35,12 @@
             gap: 10px;
             margin-top: 20px;
         }
+        .move-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
         #moves {
             font-size: 20px;
             margin: 20px 0;
@@ -48,9 +54,12 @@
 </head>
 <body>
     <div id="moves">Moves: 0</div>
-    <button id="playTones">Play Tones</button>
-    <button id="stopTones">Stop Tones</button>
-    <button id="makeMove">Make a Move</button>
+    <button id="startGame">Start Game</button>
+    <div class="move-options">
+        <button id="makeMoveBig">Make a Move Big</button>
+        <button id="makeMoveMedium">Make a Move Medium</button>
+        <button id="makeMoveTiny">Make a Move Tiny</button>
+    </div>
     <div class="control-matrix">
         <button id="keepBig">Keep Going Big</button>
         <button id="keepMedium">Keep Going Medium</button>
@@ -59,7 +68,7 @@
         <button id="turnMedium">Turn Around Medium</button>
         <button id="turnTiny">Turn Around Tiny</button>
     </div>
-    <button id="reset">Reset Game</button>
+    <button id="reset">Reset / Stop Tones</button>
     <div>Best Score: <span id="bestScore">--</span> Moves</div>
     <div id="message"></div>
 
@@ -79,10 +88,11 @@
         const movesDisplay = document.getElementById('moves');
         const messageDisplay = document.getElementById('message');
         const bestScoreDisplay = document.getElementById('bestScore');
-        const makeMoveBtn = document.getElementById('makeMove');
-        const playTonesBtn = document.getElementById('playTones');
-        const stopTonesBtn = document.getElementById('stopTones');
+        const startGameBtn = document.getElementById('startGame');
         const resetBtn = document.getElementById('reset');
+        const makeMoveBigBtn = document.getElementById('makeMoveBig');
+        const makeMoveMediumBtn = document.getElementById('makeMoveMedium');
+        const makeMoveTinyBtn = document.getElementById('makeMoveTiny');
 
         // Utility Functions
         function randomRange(min, max) {
@@ -130,16 +140,24 @@
             document.querySelectorAll('.control-matrix button').forEach(btn => {
                 btn.disabled = disable;
             });
+            makeMoveBigBtn.disabled = disable;
+            makeMoveMediumBtn.disabled = disable;
+            makeMoveTinyBtn.disabled = disable;
         }
 
         // Game Logic
-        function makeFirstMove() {
+        function makeMove(size) {
             const direction = Math.random() < 0.5 ? 'up' : 'down';
-            const amount = randomRange(5, 10);
+            const amount = randomRange(
+                size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
+                size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
+            );
             tone2Freq += (direction === 'up' ? amount : -amount);
             lastDirection = direction;
             moveCount = 1;
-            makeMoveBtn.disabled = true;
+            makeMoveBigBtn.disabled = true;
+            makeMoveMediumBtn.disabled = true;
+            makeMoveTinyBtn.disabled = true;
             updateDisplay();
             playTones();
             disableControls(false);
@@ -169,17 +187,20 @@
             tone2Freq = Math.floor(Math.random() * 11) + 435;
             moveCount = 0;
             lastDirection = null;
-            makeMoveBtn.disabled = false;
+            makeMoveBigBtn.disabled = false;
+            makeMoveMediumBtn.disabled = false;
+            makeMoveTinyBtn.disabled = false;
             disableControls(true);
             updateDisplay();
             messageDisplay.textContent = '';
         }
 
         // Event Listeners
-        playTonesBtn.addEventListener('click', playTones);
-        stopTonesBtn.addEventListener('click', stopTones);
-        makeMoveBtn.addEventListener('click', makeFirstMove);
+        startGameBtn.addEventListener('click', playTones);
         resetBtn.addEventListener('click', resetGame);
+        makeMoveBigBtn.addEventListener('click', () => makeMove('Big'));
+        makeMoveMediumBtn.addEventListener('click', () => makeMove('Medium'));
+        makeMoveTinyBtn.addEventListener('click', () => makeMove('Tiny'));
 
         document.getElementById('keepBig').addEventListener('click', () => adjustTone('Keep Going', 'Big'));
         document.getElementById('keepMedium').addEventListener('click', () => adjustTone('Keep Going', 'Medium'));
@@ -190,7 +211,7 @@
 
         // Initial Setup
         updateDisplay();
-        disableControls(true); // Disable matrix until first move
+        disableControls(true); // Disable controls until first move
     </script>
 </body>
 </html>
