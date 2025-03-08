@@ -165,11 +165,11 @@
             makeMoveMediumBtn.disabled = false;
             makeMoveTinyBtn.disabled = false;
             console.log("Game started, Make a Move buttons enabled");
-            // Control matrix remains disabled until a move is made
         }
 
         function makeMove(size) {
             if (!gameStarted) return; // Prevent moves before game starts
+            disableMakeMoveButtons(); // Disable immediately after press
             const direction = Math.random() < 0.5 ? 'up' : 'down';
             const amount = randomRange(
                 size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
@@ -178,7 +178,6 @@
             tone2Freq += (direction === 'up' ? amount : -amount);
             lastDirection = direction;
             moveCount = 1;
-            disableMakeMoveButtons(); // Disable all Make a Move buttons
             updateDisplay();
             if (osc1 && osc2) {
                 osc2.frequency.value = tone2Freq; // Update live tone
