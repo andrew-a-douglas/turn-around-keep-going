@@ -146,6 +146,14 @@
         }
 
         // Game Logic
+        function startGame() {
+            playTones();
+            makeMoveBigBtn.disabled = false;
+            makeMoveMediumBtn.disabled = false;
+            makeMoveTinyBtn.disabled = false;
+            // Keep control matrix disabled until a move is made
+        }
+
         function makeMove(size) {
             const direction = Math.random() < 0.5 ? 'up' : 'down';
             const amount = randomRange(
@@ -159,8 +167,11 @@
             makeMoveMediumBtn.disabled = true;
             makeMoveTinyBtn.disabled = true;
             updateDisplay();
-            playTones();
-            disableControls(false);
+            if (osc1 && osc2) {
+                osc2.frequency.value = tone2Freq; // Update live tone
+            }
+            disableControls(false); // Enable control matrix
+            checkWin();
         }
 
         function adjustTone(action, size) {
@@ -187,16 +198,16 @@
             tone2Freq = Math.floor(Math.random() * 11) + 435;
             moveCount = 0;
             lastDirection = null;
-            makeMoveBigBtn.disabled = false;
-            makeMoveMediumBtn.disabled = false;
-            makeMoveTinyBtn.disabled = false;
+            makeMoveBigBtn.disabled = true;
+            makeMoveMediumBtn.disabled = true;
+            makeMoveTinyBtn.disabled = true;
             disableControls(true);
             updateDisplay();
             messageDisplay.textContent = '';
         }
 
         // Event Listeners
-        startGameBtn.addEventListener('click', playTones);
+        startGameBtn.addEventListener('click', startGame);
         resetBtn.addEventListener('click', resetGame);
         makeMoveBigBtn.addEventListener('click', () => makeMove('Big'));
         makeMoveMediumBtn.addEventListener('click', () => makeMove('Medium'));
@@ -211,7 +222,10 @@
 
         // Initial Setup
         updateDisplay();
-        disableControls(true); // Disable controls until first move
+        disableControls(true); // Disable all controls initially
+        makeMoveBigBtn.disabled = true;
+        makeMoveMediumBtn.disabled = true;
+        makeMoveTinyBtn.disabled = true;
     </script>
 </body>
 </html>
