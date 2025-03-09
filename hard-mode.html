@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuning Practice Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 200px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .control-matrix, .move-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        #moves, #scoreDetails {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+        #message {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+            text-align: center;
+        }
+        select {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="moves">Moves: 0</div>
+    <select id="modeSelect">
+        <option value="tenors">Tuning Two Tenors</option>
+        <option value="bass">Tuning Tenor to Bass</option>
+        <option value="chanter">Tuning Tenor to Chanter</option>
+    </select>
+    <button id="startGame">Start Game</button>
+    <div class="move-options">
+        <button id="makeMoveBig">Make a Move Big</button>
+        <button id="makeMoveMedium">Make a Move Medium</button>
+        <button id="makeMoveTiny">Make a Move Tiny</button>
+    </div>
+    <div class="control-matrix">
+        <button id="keepBig">Keep Going Big</button>
+        <button id="keepMedium">Keep Going Medium</button>
+        <button id="keepTiny">Keep Going Tiny</button>
+        <button id="turnBig">Turn Around Big</button>
+        <button id="turnMedium">Turn Around Medium</button>
+        <button id="turnTiny">Turn Around Tiny</button>
+    </div>
+    <button id="finish">Finished</button>
+    <button id="reset">Reset / Stop Tones</button>
+    <div>Best Score: <span id="bestScore">--</span></div>
+    <div id="scoreDetails"></div>
+    <div id="message"></div>
+
+    <script>
+        // Audio Context Setup
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let osc1, osc2;
+
+        // Game State
+        let baseFreq, targetFreq, tone2Freq;
+        let moveCount = 0;
+        let startTime = null;
+        let lastDirection = null;
+        let bestScore = Infinity;
+        let gameStarted = false;
+
+        // DOM Elements
+        const movesDisplay = document.getElementById('moves');
+        const scoreDetailsDisplay = document.getElementById('scoreDetails');
+        const messageDisplay = document.getElementById('message');
+        const bestScoreDisplay = document.getElementById('bestScore');
+        const startGameBtn = document.getElementById('startGame');
+        const resetBtn = document.getElementById('reset');
+        const finishBtn = document.getElementById('finish');
+        const makeMoveBigBtn = document.getElementById('makeMoveBig');
+        const makeMoveMediumBtn = document.getElementById('makeMoveMedium');
+        const makeMoveTinyBtn = document.getElementById('makeMoveTiny');
+        const modeSelect = document.getElementById('modeSelect');
+
+        // Utility Functions
+        function randomRange(min, max) {
+            return Number((Math.random() * (max - min) + min).toFixed(2));
+        }
+
+        function updateDisplay() {
+            movesDisplay.textContent = `Moves: ${moveCount}`;
+        }
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+                console.log("AudioContext initialized");
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                    console.log("AudioContext resumed");
+                });
+            }
+        }
+
+        function playTones() {
+            if (osc1 && osc2) stopTones();
+            initAudioContext();
+            osc1 = audioCtx.createOscillator();
+            osc2 = audioCtx.createOscillator();
+            osc1.type = 'sine';
+            osc2.type = 'sine';
+            osc1.frequency.value = baseFreq;
+            osc2.frequency.value = tone2Freq;
+            osc1.connect(audioCtx.destination);
+            osc2.connect(audioCtx.destination);
+            osc1.start();
+            osc2.start();
+            console.log("Tones playing: Base =", baseFreq, "Tone 2 =", tone2Freq);
+        }
+
+        function stopTones() {
+            if (osc1) osc1.stop();
+            if (osc2) osc2.stop();
+            osc1 = null;
+            osc2 = null;
+            console.log("Tones stopped");
+        }
+
+        function setMode() {
+            const mode = modeSelect.value;
+            if (mode === "tenors") {
+                baseFreq = randomRange(233, 248);
+                targetFreq = baseFreq;
+                tone2Freq = baseFreq + randomRange(-15, 15);
+            } else if (mode === "bass") {
+                baseFreq = randomRange(233, 248);
+                targetFreq = (baseFreq / 2).toFixed(2);
+                tone2Freq = targetFreq * 1 + randomRange(-15, 15);
+            } else if (mode === "chanter") {
+                baseFreq = randomRange(466, 492);
+                targetFreq = (baseFreq / 2).toFixed(2);
+                tone2Freq = targetFreq * 1 + randomRange(-15, 15);
+            }
+            console.log("Mode set:", mode, "Base Freq =", baseFreq, "Target Freq =", targetFreq, "Initial Tone 2 =", tone2Freq);
+        }
+
+        function calculateScore() {
+            const endTime = Date.now();
+            const timeSeconds = Math.round((endTime - startTime) / 1000); // Seconds
+            const differential = Math.abs(tone2Freq - targetFreq).toFixed(2); // Hz difference
+            const score = (moveCount * timeSeconds * differential).toFixed(2); // Combined score
+            scoreDetailsDisplay.textContent = `Moves: ${moveCount}, Time: ${timeSeconds}s, Differential: ${differential}Hz, Score: ${score}`;
+            if (score < bestScore && score > 0) {
+                bestScore = score;
+                bestScoreDisplay.textContent = bestScore;
+                console.log("New best score:", bestScore);
+            }
+            stopTones();
+            gameStarted = false;
+            disableControls(true);
+            console.log("Score calculated:", { moves: moveCount, time: timeSeconds, differential, score });
+        }
+
+        function disableControls(disable) {
+            document.querySelectorAll('.control-matrix button').forEach(btn => btn.disabled = disable);
+            makeMoveBigBtn.disabled = disable;
+            makeMoveMediumBtn.disabled = disable;
+            makeMoveTinyBtn.disabled = disable;
+            finishBtn.disabled = disable;
+            console.log("Controls disabled:", disable);
+        }
+
+        function disableMakeMoveButtons() {
+            makeMoveBigBtn.disabled = true;
+            makeMoveMediumBtn.disabled = true;
+            makeMoveTinyBtn.disabled = true;
+            console.log("Make a Move buttons disabled");
+        }
+
+        // Game Logic
+        function startGame() {
+            initAudioContext();
+            setMode();
+            playTones();
+            gameStarted = true;
+            startTime = Date.now(); // Start timing
+            makeMoveBigBtn.disabled = false;
+            makeMoveMediumBtn.disabled = false;
+            makeMoveTinyBtn.disabled = false;
+            finishBtn.disabled = false;
+            messageDisplay.textContent = '';
+            scoreDetailsDisplay.textContent = '';
+            console.log("Game started, Make a Move buttons enabled");
+        }
+
+        function makeMove(size) {
+            if (!gameStarted) return;
+            disableMakeMoveButtons();
+            const direction = Math.random() < 0.5 ? 'up' : 'down';
+            const amount = randomRange(
+                size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
+                size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
+            );
+            tone2Freq += (direction === 'up' ? amount : -amount);
+            tone2Freq = Number(tone2Freq.toFixed(2));
+            lastDirection = direction;
+            moveCount = 1;
+            updateDisplay();
+            if (osc1 && osc2) {
+                osc2.frequency.value = tone2Freq;
+            }
+            document.querySelectorAll('.control-matrix button').forEach(btn => btn.disabled = false);
+            console.log("Move made:", size, "New Tone 2 =", tone2Freq);
+        }
+
+        function adjustTone(action, size) {
+            if (!gameStarted) return;
+            const amount = randomRange(
+                size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
+                size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
+            );
+            if (action === 'Keep Going') {
+                tone2Freq += (lastDirection === 'up' ? amount : -amount);
+            } else {
+                tone2Freq += (lastDirection === 'up' ? -amount : amount);
+                lastDirection = lastDirection === 'up' ? 'down' : 'up';
+            }
+            tone2Freq = Number(tone2Freq.toFixed(2));
+            moveCount++;
+            updateDisplay();
+            if (osc1 && osc2) {
+                osc2.frequency.value = tone2Freq;
+            }
+            console.log("Adjusted:", action, size, "New Tone 2 =", tone2Freq);
+        }
+
+        function resetGame() {
+            stopTones();
+            moveCount = 0;
+            startTime = null;
+            lastDirection = null;
+            gameStarted = false;
+            disableControls(true);
+            updateDisplay();
+            messageDisplay.textContent = '';
+            scoreDetailsDisplay.textContent = '';
+            setMode();
+            console.log("Game reset");
+        }
+
+        // Event Listeners
+        startGameBtn.addEventListener('click', startGame);
+        resetBtn.addEventListener('click', resetGame);
+        finishBtn.addEventListener('click', calculateScore);
+        makeMoveBigBtn.addEventListener('click', () => makeMove('Big'));
+        makeMoveMediumBtn.addEventListener('click', () => makeMove('Medium'));
+        makeMoveTinyBtn.addEventListener('click', () => makeMove('Tiny'));
+
+        document.getElementById('keepBig').addEventListener('click', () => adjustTone('Keep Going', "Big"));
+        document.getElementById('keepMedium').addEventListener('click', () => adjustTone('Keep Going', "Medium"));
+        document.getElementById('keepTiny').addEventListener('click', () => adjustTone('Keep Going', "Tiny"));
+        document.getElementById('turnBig').addEventListener('click', () => adjustTone('Turn Around', "Big"));
+        document.getElementById('turnMedium').addEventListener('click', () => adjustTone('Turn Around', "Medium"));
+        document.getElementById('turnTiny').addEventListener('click', () => adjustTone('Turn Around', "Tiny"));
+
+        // Initial Setup
+        updateDisplay();
+        disableControls(true);
+        finishBtn.disabled = true; // Disable "Finished" until game starts
+        setMode();
+    </script>
+</body>
+</html>
