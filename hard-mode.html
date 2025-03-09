@@ -13,8 +13,9 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Fixed syntax */
             padding: 20px;
+            border: 2px solid red; /* Diagnostic: Should show a red border if CSS loads */
         }
         button {
             padding: 12px 24px;
@@ -227,7 +228,7 @@
             stopTones();
             gameStarted = false;
             disableControls(true);
-            startGameBtn.disabled = false; // Ensure Start Game is enabled after finish
+            startGameBtn.disabled = false;
             console.log("Score calculated:", { moves: moveCount, time: timeSeconds, differential, score });
         }
 
@@ -258,8 +259,8 @@
             makeMoveMediumBtn.disabled = false;
             makeMoveTinyBtn.disabled = false;
             finishBtn.disabled = false;
-            resetBtn.disabled = false; // Enable Reset during gameplay
-            document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = true); // Ensure initially disabled
+            resetBtn.disabled = false;
+            document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = true);
             messageDisplay.textContent = '';
             scoreDetailsDisplay.textContent = '';
             console.log("Game started, Make a Move buttons enabled");
@@ -272,13 +273,13 @@
             let amount;
             switch (size) {
                 case 'Tiny':
-                    amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
+                    amount = randomRange(0, 0.50);
                     break;
                 case 'Medium':
-                    amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
+                    amount = randomRange(0.51, 3.00);
                     break;
                 case 'Big':
-                    amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
+                    amount = randomRange(3.01, 6.00);
                     break;
             }
             tone2Freq += (direction === 'up' ? amount : -amount);
@@ -289,7 +290,6 @@
             if (osc1 && osc2) {
                 osc2.frequency.value = tone2Freq;
             }
-            // Enable Keep Going and Turn Around buttons after the first move
             document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = false);
             console.log("Move made:", size, "Amount =", amount, "New Tone 2 =", tone2Freq);
         }
@@ -299,13 +299,13 @@
             let amount;
             switch (size) {
                 case 'Tiny':
-                    amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
+                    amount = randomRange(0, 0.50);
                     break;
                 case 'Medium':
-                    amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
+                    amount = randomRange(0.51, 3.00);
                     break;
                 case 'Big':
-                    amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
+                    amount = randomRange(3.01, 6.00);
                     break;
             }
             if (action === 'Keep Going') {
@@ -330,7 +330,7 @@
             lastDirection = null;
             gameStarted = false;
             disableControls(true);
-            startGameBtn.disabled = false; // Enable Start Game after reset
+            startGameBtn.disabled = false;
             updateDisplay();
             messageDisplay.textContent = '';
             scoreDetailsDisplay.textContent = '';
@@ -355,7 +355,7 @@
         // Initial Setup
         updateDisplay();
         disableControls(true);
-        startGameBtn.disabled = false; // Start Game enabled initially
+        startGameBtn.disabled = false;
         finishBtn.disabled = true;
         resetBtn.disabled = true;
         setMode();
