@@ -6,56 +6,91 @@
     <title>Tuning Practice Game</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            padding: 10px;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            padding: 20px;
         }
         button {
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 12px 24px;
+            margin: 8px;
             font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
+            font-weight: 500;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
             width: 100%;
             max-width: 200px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0);
         }
         button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
+            box-shadow: none;
+        }
+        /* Control Buttons (Gray) */
+        #startGame, #finish, #reset {
+            background-color: #808080;
+        }
+        /* Make a Move Buttons (Blue) */
+        .move-options button {
+            background-color: #007BFF;
+        }
+        /* Keep Going Buttons (Green) */
+        .keep-going button {
+            background-color: #28A745;
+        }
+        /* Turn Around Buttons (Red) */
+        .turn-around button {
+            background-color: #DC3545;
         }
         .move-options, .keep-going, .turn-around {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3x1 grid per row */
-            gap: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-top: 20px;
             width: 100%;
-            max-width: 600px;
+            max-width: 660px; /* Adjusted for 3x200px buttons + gaps */
         }
         #moves, #scoreDetails {
             font-size: 20px;
             margin: 20px 0;
+            color: #333;
         }
         #message {
             font-size: 18px;
-            color: #333;
+            color: #444;
             margin-top: 20px;
             text-align: center;
         }
         select {
-            padding: 10px;
-            margin: 10px;
+            padding: 12px;
+            margin: 12px;
             font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
             width: 100%;
             max-width: 200px;
+            background-color: white;
+            color: #333;
+        }
+        #bestScore {
+            font-weight: bold;
+            color: #007BFF;
         }
     </style>
 </head>
@@ -70,7 +105,7 @@
     <div class="move-options">
         <button id="makeMoveBig">Make a Move Big</button>
         <button id="makeMoveMedium">Make a Move Medium</button>
-        <button id="makeMoveTiny">Make a Move Tiny</button> <!-- Fixed syntax -->
+        <button id="makeMoveTiny">Make a Move Tiny</button>
     </div>
     <div class="keep-going">
         <button id="keepBig">Keep Going Big</button>
