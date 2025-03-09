@@ -13,7 +13,7 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient( [135deg, #f0f0f0, #e0e0e0);
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
             padding: 20px;
         }
         button {
@@ -38,7 +38,7 @@
             transform: translateY(0);
         }
         button:disabled {
-            background-color: #808080 !important; /* Force gray for all disabled buttons */
+            background-color: #808080 !important;
             cursor: not-allowed;
             box-shadow: none;
         }
@@ -217,7 +217,7 @@
             const endTime = Date.now();
             const timeSeconds = Math.round((endTime - startTime) / 1000);
             const differential = Math.abs(tone2Freq - targetFreq).toFixed(2);
-            const score = ((moveCount + timeSeconds) * differential).toFixed(2); // New scoring: (moves + seconds) * differential
+            const score = ((moveCount + timeSeconds) * differential).toFixed(2);
             scoreDetailsDisplay.textContent = `Moves: ${moveCount}, Time: ${timeSeconds}s, Differential: ${differential}Hz, Score: ${score}`;
             if (score < bestScore && score > 0) {
                 bestScore = score;
@@ -227,6 +227,7 @@
             stopTones();
             gameStarted = false;
             disableControls(true);
+            startGameBtn.disabled = false; // Ensure Start Game is enabled after finish
             console.log("Score calculated:", { moves: moveCount, time: timeSeconds, differential, score });
         }
 
@@ -257,6 +258,8 @@
             makeMoveMediumBtn.disabled = false;
             makeMoveTinyBtn.disabled = false;
             finishBtn.disabled = false;
+            resetBtn.disabled = false; // Enable Reset during gameplay
+            document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = true); // Ensure initially disabled
             messageDisplay.textContent = '';
             scoreDetailsDisplay.textContent = '';
             console.log("Game started, Make a Move buttons enabled");
@@ -286,6 +289,7 @@
             if (osc1 && osc2) {
                 osc2.frequency.value = tone2Freq;
             }
+            // Enable Keep Going and Turn Around buttons after the first move
             document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = false);
             console.log("Move made:", size, "Amount =", amount, "New Tone 2 =", tone2Freq);
         }
@@ -326,6 +330,7 @@
             lastDirection = null;
             gameStarted = false;
             disableControls(true);
+            startGameBtn.disabled = false; // Enable Start Game after reset
             updateDisplay();
             messageDisplay.textContent = '';
             scoreDetailsDisplay.textContent = '';
@@ -350,7 +355,9 @@
         // Initial Setup
         updateDisplay();
         disableControls(true);
+        startGameBtn.disabled = false; // Start Game enabled initially
         finishBtn.disabled = true;
+        resetBtn.disabled = true;
         setMode();
     </script>
 </body>
