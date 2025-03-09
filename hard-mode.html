@@ -34,7 +34,7 @@
         }
         .move-options, .keep-going, .turn-around {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3x1 grid for each row */
+            grid-template-columns: repeat(3, 1fr); /* 3x1 grid per row */
             gap: 10px;
             margin-top: 20px;
             width: 100%;
@@ -70,7 +70,7 @@
     <div class="move-options">
         <button id="makeMoveBig">Make a Move Big</button>
         <button id="makeMoveMedium">Make a Move Medium</button>
-        “Make a Move Tiny</button>
+        <button id="makeMoveTiny">Make a Move Tiny</button>
     </div>
     <div class="keep-going">
         <button id="keepBig">Keep Going Big</button>
@@ -232,12 +232,16 @@
             disableMakeMoveButtons();
             const direction = Math.random() < 0.5 ? 'up' : 'down';
             let amount;
-            if (size === 'Tiny') {
-                amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
-            } else if (size === 'Medium') {
-                amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
-            } else {
-                amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
+            switch (size) {
+                case 'Tiny':
+                    amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
+                    break;
+                case 'Medium':
+                    amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
+                    break;
+                case 'Big':
+                    amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
+                    break;
             }
             tone2Freq += (direction === 'up' ? amount : -amount);
             tone2Freq = Number(tone2Freq.toFixed(2));
@@ -254,12 +258,16 @@
         function adjustTone(action, size) {
             if (!gameStarted) return;
             let amount;
-            if (size === 'Tiny') {
-                amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
-            } else if (size === 'Medium') {
-                amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
-            } else {
-                amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
+            switch (size) {
+                case 'Tiny':
+                    amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
+                    break;
+                case 'Medium':
+                    amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
+                    break;
+                case 'Big':
+                    amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
+                    break;
             }
             if (action === 'Keep Going') {
                 tone2Freq += (lastDirection === 'up' ? amount : -amount);
