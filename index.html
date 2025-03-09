@@ -129,17 +129,24 @@
 
         function checkWin() {
             if (tone2Freq === TONE_1_FREQ) {
-                messageDisplay.textContent = "You Win! Tones Matched in " + moveCount + " Moves!";
+                console.log("Win condition met: Tone 2 =", tone2Freq);
+                messageDisplay.textContent = `You Win! Tones Matched in ${moveCount} Moves!`;
                 if (moveCount < bestScore) {
                     bestScore = moveCount;
                     bestScoreDisplay.textContent = bestScore;
+                    console.log("New best score:", bestScore);
                 }
                 disableControls(true);
                 gameStarted = false;
-                // Delay stopping tones for 5 seconds
+                // Ensure tones are set to 440 Hz and play for 5 seconds
+                if (osc1 && osc2) {
+                    osc1.frequency.value = TONE_1_FREQ;
+                    osc2.frequency.value = TONE_1_FREQ;
+                    console.log("Tones set to 440 Hz for win");
+                }
                 setTimeout(() => {
                     stopTones();
-                    console.log("Tones stopped after 5 seconds");
+                    console.log("Tones stopped after 5-second delay");
                 }, 5000);
             }
         }
