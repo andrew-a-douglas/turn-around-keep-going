@@ -166,21 +166,21 @@
                 tone2Freq = baseFreq + randomRange(-15, 15);
             } else if (mode === "bass") {
                 baseFreq = randomRange(233, 248);
-                targetFreq = (baseFreq / 2).toFixed(2);
-                tone2Freq = targetFreq * 1 + randomRange(-15, 15);
+                targetFreq = Number((baseFreq / 2).toFixed(2));
+                tone2Freq = targetFreq + randomRange(-15, 15);
             } else if (mode === "chanter") {
                 baseFreq = randomRange(466, 492);
-                targetFreq = (baseFreq / 2).toFixed(2);
-                tone2Freq = targetFreq * 1 + randomRange(-15, 15);
+                targetFreq = Number((baseFreq / 2).toFixed(2));
+                tone2Freq = targetFreq + randomRange(-15, 15);
             }
             console.log("Mode set:", mode, "Base Freq =", baseFreq, "Target Freq =", targetFreq, "Initial Tone 2 =", tone2Freq);
         }
 
         function calculateScore() {
             const endTime = Date.now();
-            const timeSeconds = Math.round((endTime - startTime) / 1000); // Seconds
-            const differential = Math.abs(tone2Freq - targetFreq).toFixed(2); // Hz difference
-            const score = (moveCount * timeSeconds * differential).toFixed(2); // Combined score
+            const timeSeconds = Math.round((endTime - startTime) / 1000);
+            const differential = Math.abs(tone2Freq - targetFreq).toFixed(2);
+            const score = (moveCount * timeSeconds * differential).toFixed(2);
             scoreDetailsDisplay.textContent = `Moves: ${moveCount}, Time: ${timeSeconds}s, Differential: ${differential}Hz, Score: ${score}`;
             if (score < bestScore && score > 0) {
                 bestScore = score;
@@ -215,7 +215,7 @@
             setMode();
             playTones();
             gameStarted = true;
-            startTime = Date.now(); // Start timing
+            startTime = Date.now();
             makeMoveBigBtn.disabled = false;
             makeMoveMediumBtn.disabled = false;
             makeMoveTinyBtn.disabled = false;
@@ -229,9 +229,9 @@
             if (!gameStarted) return;
             disableMakeMoveButtons();
             const direction = Math.random() < 0.5 ? 'up' : 'down';
-            const amount = randomRange(
-                size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
-                size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
+            const amount = size === 'Tiny' ? randomRange(0, 1) : randomRange(
+                size === 'Big' ? 6 : 2,
+                size === 'Big' ? 9 : 5
             );
             tone2Freq += (direction === 'up' ? amount : -amount);
             tone2Freq = Number(tone2Freq.toFixed(2));
@@ -242,14 +242,14 @@
                 osc2.frequency.value = tone2Freq;
             }
             document.querySelectorAll('.control-matrix button').forEach(btn => btn.disabled = false);
-            console.log("Move made:", size, "New Tone 2 =", tone2Freq);
+            console.log("Move made:", size, "Amount =", amount, "New Tone 2 =", tone2Freq);
         }
 
         function adjustTone(action, size) {
             if (!gameStarted) return;
-            const amount = randomRange(
-                size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
-                size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
+            const amount = size === 'Tiny' ? randomRange(0, 1) : randomRange(
+                size === 'Big' ? 6 : 2,
+                size === 'Big' ? 9 : 5
             );
             if (action === 'Keep Going') {
                 tone2Freq += (lastDirection === 'up' ? amount : -amount);
@@ -263,7 +263,7 @@
             if (osc1 && osc2) {
                 osc2.frequency.value = tone2Freq;
             }
-            console.log("Adjusted:", action, size, "New Tone 2 =", tone2Freq);
+            console.log("Adjusted:", action, size, "Amount =", amount, "New Tone 2 =", tone2Freq);
         }
 
         function resetGame() {
@@ -287,7 +287,6 @@
         makeMoveBigBtn.addEventListener('click', () => makeMove('Big'));
         makeMoveMediumBtn.addEventListener('click', () => makeMove('Medium'));
         makeMoveTinyBtn.addEventListener('click', () => makeMove('Tiny'));
-
         document.getElementById('keepBig').addEventListener('click', () => adjustTone('Keep Going', "Big"));
         document.getElementById('keepMedium').addEventListener('click', () => adjustTone('Keep Going', "Medium"));
         document.getElementById('keepTiny').addEventListener('click', () => adjustTone('Keep Going', "Tiny"));
@@ -298,7 +297,7 @@
         // Initial Setup
         updateDisplay();
         disableControls(true);
-        finishBtn.disabled = true; // Disable "Finished" until game starts
+        finishBtn.disabled = true;
         setMode();
     </script>
 </body>
