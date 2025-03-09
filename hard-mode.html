@@ -123,20 +123,7 @@
     <div>Best Score: <span id="bestScore">--</span></div>
     <div id="scoreDetails"></div>
     <div id="message"></div>
-    <div id="how-to-play" style="margin-top: 40px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; max-width: 660px; text-align: left; color: #333;">
-        <h2 style="font-size: 24px; margin-bottom: 15px; color: #000;">How to Play</h2>
-        <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch using the available controls. The goal is to minimize the frequency differential with the fewest moves and shortest time.</p>
-        <p><strong>Gameplay:</strong></p>
-        <ul style="list-style-type: disc; margin-left: 20px;">
-            <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
-            <li><strong>Make a Move:</strong> Use "Make a Move" buttons (Big, Medium, Tiny) to initially adjust the second tone's frequency. Each move sets a random adjustment (Big: 3.01-6.00 Hz, Medium: 0.51-3.00 Hz, Tiny: 0-0.50 Hz) up or down.</li>
-            <li><strong>Refine Tuning:</strong> After the first move, use "Keep Going" (same direction) or "Turn Around" (opposite direction) buttons to fine-tune the pitch with similar ranges.</li>
-            <li><strong>Finish:</strong> Click "Finished" when you believe the tones match. The game calculates your score.</li>
-            <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop the tones and start over.</li>
-        </ul>
-        <p><strong>Scoring:</strong> Your score is calculated as (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores are better—fewer moves, less time, and a smaller differential improve your score. Aim for the best score!</p>
-        <p><strong>Modes:</strong> Choose from "Tuning Two Tenors," "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" to adjust the base frequency range.</p>
-    </div>
+    
 
     <script>
         // Audio Context Setup
@@ -375,6 +362,20 @@
         setMode();
     </script>
 
+    <div id="how-to-play" style="margin-top: 40px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; max-width: 660px; text-align: left; color: #333;">
+        <h2 style="font-size: 24px; margin-bottom: 15px; color: #000;">How to Play</h2>
+        <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch using the available controls. The goal is to minimize the frequency differential with the fewest moves and shortest time.</p>
+        <p><strong>Gameplay:</strong></p>
+        <ul style="list-style-type: disc; margin-left: 20px;">
+            <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
+            <li><strong>Make a Move:</strong> Use "Make a Move" buttons (Big, Medium, Tiny) to initially adjust the second tone's frequency. Each move sets a random adjustment (Big: 3.01-6.00 Hz, Medium: 0.51-3.00 Hz, Tiny: 0-0.50 Hz) up or down.</li>
+            <li><strong>Refine Tuning:</strong> After the first move, use "Keep Going" (same direction) or "Turn Around" (opposite direction) buttons to fine-tune the pitch with similar ranges.</li>
+            <li><strong>Finish:</strong> Click "Finished" when you believe the tones match. The game calculates your score.</li>
+            <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop the tones and start over.</li>
+        </ul>
+        <p><strong>Scoring:</strong> Your score is calculated as (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores are better—fewer moves, less time, and a smaller differential improve your score. Aim for the best score!</p>
+        <p><strong>Modes:</strong> Choose from "Tuning Two Tenors," "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" to adjust the base frequency range.</p>
+    </div>
     
 </body>
 </html>
