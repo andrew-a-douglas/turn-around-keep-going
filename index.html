@@ -129,14 +129,18 @@
 
         function checkWin() {
             if (tone2Freq === TONE_1_FREQ) {
-                stopTones();
-                messageDisplay.textContent = `Tones Matched in ${moveCount} Moves!`;
+                messageDisplay.textContent = "You Win! Tones Matched in " + moveCount + " Moves!";
                 if (moveCount < bestScore) {
                     bestScore = moveCount;
                     bestScoreDisplay.textContent = bestScore;
                 }
                 disableControls(true);
                 gameStarted = false;
+                // Delay stopping tones for 5 seconds
+                setTimeout(() => {
+                    stopTones();
+                    console.log("Tones stopped after 5 seconds");
+                }, 5000);
             }
         }
 
