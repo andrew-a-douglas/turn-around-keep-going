@@ -32,9 +32,9 @@
             background-color: #cccccc;
             cursor: not-allowed;
         }
-        .control-matrix, .move-options {
+        .move-options, .keep-going, .turn-around {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Fixed 3-column grid */
+            grid-template-columns: repeat(3, 1fr); /* 3x1 grid for each row */
             gap: 10px;
             margin-top: 20px;
             width: 100%;
@@ -70,12 +70,14 @@
     <div class="move-options">
         <button id="makeMoveBig">Make a Move Big</button>
         <button id="makeMoveMedium">Make a Move Medium</button>
-        <button id="makeMoveTiny">Make a Move Tiny</button>
+        “Make a Move Tiny</button>
     </div>
-    <div class="control-matrix">
+    <div class="keep-going">
         <button id="keepBig">Keep Going Big</button>
         <button id="keepMedium">Keep Going Medium</button>
         <button id="keepTiny">Keep Going Tiny</button>
+    </div>
+    <div class="turn-around">
         <button id="turnBig">Turn Around Big</button>
         <button id="turnMedium">Turn Around Medium</button>
         <button id="turnTiny">Turn Around Tiny</button>
@@ -194,7 +196,7 @@
         }
 
         function disableControls(disable) {
-            document.querySelectorAll('.control-matrix button').forEach(btn => btn.disabled = disable);
+            document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = disable);
             makeMoveBigBtn.disabled = disable;
             makeMoveMediumBtn.disabled = disable;
             makeMoveTinyBtn.disabled = disable;
@@ -231,12 +233,11 @@
             const direction = Math.random() < 0.5 ? 'up' : 'down';
             let amount;
             if (size === 'Tiny') {
-                amount = randomRange(0, 1); // 0 to 1 Hz
+                amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
+            } else if (size === 'Medium') {
+                amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
             } else {
-                amount = randomRange(
-                    size === 'Big' ? 6 : 2,
-                    size === 'Big' ? 9 : 5
-                );
+                amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
             }
             tone2Freq += (direction === 'up' ? amount : -amount);
             tone2Freq = Number(tone2Freq.toFixed(2));
@@ -246,7 +247,7 @@
             if (osc1 && osc2) {
                 osc2.frequency.value = tone2Freq;
             }
-            document.querySelectorAll('.control-matrix button').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('.keep-going button, .turn-around button').forEach(btn => btn.disabled = false);
             console.log("Move made:", size, "Amount =", amount, "New Tone 2 =", tone2Freq);
         }
 
@@ -254,12 +255,11 @@
             if (!gameStarted) return;
             let amount;
             if (size === 'Tiny') {
-                amount = randomRange(0, 1); // 0 to 1 Hz
+                amount = randomRange(0, 0.50); // 0.00 to 0.50 Hz
+            } else if (size === 'Medium') {
+                amount = randomRange(0.51, 3.00); // 0.51 to 3.00 Hz
             } else {
-                amount = randomRange(
-                    size === 'Big' ? 6 : 2,
-                    size === 'Big' ? 9 : 5
-                );
+                amount = randomRange(3.01, 6.00); // 3.01 to 6.00 Hz
             }
             if (action === 'Keep Going') {
                 tone2Freq += (lastDirection === 'up' ? amount : -amount);
