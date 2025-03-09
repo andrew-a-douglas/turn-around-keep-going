@@ -13,7 +13,7 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            background: linear-gradient( [135deg, #f0f0f0, #e0e0e0);
             padding: 20px;
         }
         button {
@@ -38,13 +38,13 @@
             transform: translateY(0);
         }
         button:disabled {
-            background-color: #808080; /* Gray when disabled */
+            background-color: #808080 !important; /* Force gray for all disabled buttons */
             cursor: not-allowed;
             box-shadow: none;
         }
         /* Control Buttons (Black) */
         #startGame, #finish, #reset {
-            background-color: #000000; /* Black when enabled */
+            background-color: #000000;
         }
         /* Make a Move Buttons (Blue) */
         .move-options button {
@@ -217,7 +217,7 @@
             const endTime = Date.now();
             const timeSeconds = Math.round((endTime - startTime) / 1000);
             const differential = Math.abs(tone2Freq - targetFreq).toFixed(2);
-            const score = (moveCount * timeSeconds * differential).toFixed(2);
+            const score = ((moveCount + timeSeconds) * differential).toFixed(2); // New scoring: (moves + seconds) * differential
             scoreDetailsDisplay.textContent = `Moves: ${moveCount}, Time: ${timeSeconds}s, Differential: ${differential}Hz, Score: ${score}`;
             if (score < bestScore && score > 0) {
                 bestScore = score;
