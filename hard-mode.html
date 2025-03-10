@@ -137,7 +137,7 @@
             <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop the tones and start over.</li>
         </ul>
         <p><strong>Scoring:</strong> Your score is calculated as (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores are better—fewer moves, less time, and a smaller differential improve your score. Aim for the best score!</p>
-        <p><strong>Official Score:</strong> The average of your last 5 tuning attempt scores is displayed as the "Official Score."</p>
+        <p><strong>Official Score:</strong> The average of your last 5 tuning attempt scores is displayed as the "Official Score" after you complete at least 5 attempts.</p>
         <p><strong>Modes:</strong> Choose from "Tuning Two Tenors," "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" to adjust the base frequency range.</p>
     </div>
 
@@ -251,7 +251,8 @@
             if (lastFiveScores.length > 5) {
                 lastFiveScores.shift(); // Remove the oldest score if more than 5
             }
-            const officialScore = calculateAverage(lastFiveScores);
+            // Show Official Score only after 5 attempts
+            const officialScore = lastFiveScores.length >= 5 ? calculateAverage(lastFiveScores) : "--";
             officialScoreDisplay.textContent = officialScore;
 
             // Update best score
