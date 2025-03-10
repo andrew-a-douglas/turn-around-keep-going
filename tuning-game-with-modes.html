@@ -3,57 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuning Practice Game</title>
+    <title>Tuning Practice Game - Beginner Mode</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Gradient like full game */
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
         }
         button {
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 12px 24px;
+            margin: 8px;
             font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
+            font-weight: 500;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            width: 100%;
+            max-width: 200px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0);
         }
         button:disabled {
-            background-color: #cccccc;
+            background-color: #808080 !important;
             cursor: not-allowed;
+            box-shadow: none;
         }
-        .control-matrix {
+        /* Control Buttons (Black) */
+        #startGame, #reset {
+            background-color: #000000;
+        }
+        /* Make a Move Buttons (Blue) */
+        .move-options button {
+            background-color: #007BFF;
+        }
+        /* Keep Going Buttons (Green) */
+        .control-matrix button[id^="keep"] {
+            background-color: #28A745;
+        }
+        /* Turn Around Buttons (Red) */
+        .control-matrix button[id^="turn"] {
+            background-color: #DC3545;
+        }
+        .control-matrix, .move-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-top: 20px;
-        }
-        .move-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
+            width: 100%;
+            max-width: 660px;
         }
         #moves {
             font-size: 20px;
             margin: 20px 0;
+            color: #333;
         }
         #message {
             font-size: 18px;
-            color: #333;
+            color: #444;
             margin-top: 20px;
+            text-align: center;
         }
         select {
-            padding: 10px;
-            margin: 10px;
+            padding: 12px;
+            margin: 12px;
             font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 200px;
+            background-color: white;
+            color: #333;
+        }
+        #bestScore {
+            font-weight: bold;
+            color: #007BFF;
         }
     </style>
 </head>
@@ -82,15 +121,30 @@
     <div>Best Score: <span id="bestScore">--</span> Moves</div>
     <div id="message"></div>
 
+    <div id="how-to-play" style="margin-top: 40px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; max-width: 660px; text-align: left; color: #333;">
+        <h2 style="font-size: 24px; margin-bottom: 15px; color: #000;">How to Play (Beginner Mode)</h2>
+        <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch using the available controls. The goal is to match the tones in the fewest moves possible.</p>
+        <p><strong>Gameplay:</strong></p>
+        <ul style="list-style-type: disc; margin-left: 20px;">
+            <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
+            <li><strong>Make a Move:</strong> Use the "Make a Move" buttons (Big, Medium, Tiny) to adjust the second tone's frequency. Each move changes the pitch by a random amount (Big: 6-9 Hz, Medium: 2-5 Hz, Tiny: 1 Hz) up or down.</li>
+            <li><strong>Refine Tuning:</strong> After the first move, use "Keep Going" (same direction) or "Turn Around" (opposite direction) buttons to fine-tune the pitch with similar ranges.</li>
+            <li><strong>Win:</strong> The game automatically detects when the tones match (within 0.1 Hz). You'll see a "You Win!" message with your move count.</li>
+            <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop the tones and start over.</li>
+        </ul>
+        <p><strong>Scoring:</strong> Your score is the number of moves taken to match the tones. Lower move counts are better. Aim for the best score (fewest moves)!</p>
+        <p><strong>Modes:</strong> Choose from "Tuning Two Tenors," "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" to adjust the base frequency range.</p>
+    </div>
+
     <script>
         // Audio Context Setup
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let osc1, osc2; // Oscillators for Tone 1 and Tone 2
+        let osc1, osc2;
 
         // Game State
-        let baseFreq = 440; // Default for initial load
-        let targetFreq = 440; // Default target
-        let tone2Freq = Math.floor(Math.random() * 11) + 435; // Initial range
+        let baseFreq = 440;
+        let targetFreq = 440;
+        let tone2Freq = Math.floor(Math.random() * 11) + 435;
         let moveCount = 0;
         let lastDirection = null;
         let bestScore = Infinity;
@@ -117,7 +171,7 @@
         }
 
         function playTones() {
-            if (osc1 && osc2) stopTones(); // Stop existing tones
+            if (osc1 && osc2) stopTones();
             osc1 = audioCtx.createOscillator();
             osc2 = audioCtx.createOscillator();
             osc1.type = 'sine';
@@ -142,24 +196,24 @@
         function setMode() {
             const mode = modeSelect.value;
             if (mode === "tenors") {
-                baseFreq = randomRange(233, 248); // Tuning Two Tenors: 233-248 Hz
-                targetFreq = baseFreq; // Match base pitch
-                tone2Freq = baseFreq + randomRange(-15, 15); // ±15 Hz range
+                baseFreq = randomRange(233, 248);
+                targetFreq = baseFreq;
+                tone2Freq = baseFreq + randomRange(-15, 15);
             } else if (mode === "bass") {
-                baseFreq = randomRange(233, 248); // Tuning Tenor to Bass: 233-248 Hz
-                targetFreq = baseFreq / 2; // One octave lower
-                tone2Freq = targetFreq + randomRange(-15, 15); // ±15 Hz range
+                baseFreq = randomRange(233, 248);
+                targetFreq = baseFreq / 2;
+                tone2Freq = targetFreq + randomRange(-15, 15);
             } else if (mode === "chanter") {
-                baseFreq = randomRange(466, 492); // Tuning Tenor to Chanter: 466-492 Hz
-                targetFreq = baseFreq / 2; // One octave lower
-                tone2Freq = targetFreq + randomRange(-15, 15); // ±15 Hz range
+                baseFreq = randomRange(466, 492);
+                targetFreq = baseFreq / 2;
+                tone2Freq = targetFreq + randomRange(-15, 15);
             }
-            tone2Freq = Math.round(tone2Freq * 10) / 10; // Round to 1 decimal place
+            tone2Freq = Math.round(tone2Freq * 10) / 10;
             console.log("Mode set:", mode, "Base Freq =", baseFreq, "Target Freq =", targetFreq, "Initial Tone 2 =", tone2Freq);
         }
 
         function checkWin() {
-            if (Math.abs(tone2Freq - targetFreq) < 0.1) { // Allow small floating-point tolerance
+            if (Math.abs(tone2Freq - targetFreq) < 0.1) {
                 console.log("Win condition met: Tone 2 =", tone2Freq, "Target =", targetFreq);
                 messageDisplay.textContent = `You Win! Tones Matched in ${moveCount} Moves!`;
                 if (moveCount < bestScore) {
@@ -200,7 +254,7 @@
 
         // Game Logic
         function startGame() {
-            setMode(); // Set base and target frequencies based on mode
+            setMode();
             playTones();
             gameStarted = true;
             makeMoveBigBtn.disabled = false;
@@ -210,45 +264,45 @@
         }
 
         function makeMove(size) {
-            if (!gameStarted) return; // Prevent moves before game starts
-            disableMakeMoveButtons(); // Disable immediately after press
+            if (!gameStarted) return;
+            disableMakeMoveButtons();
             const direction = Math.random() < 0.5 ? 'up' : 'down';
             const amount = randomRange(
                 size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
                 size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
             );
             tone2Freq += (direction === 'up' ? amount : -amount);
-            tone2Freq = Math.round(tone2Freq * 10) / 10; // Round to 1 decimal
+            tone2Freq = Math.round(tone2Freq * 10) / 10;
             lastDirection = direction;
             moveCount = 1;
             updateDisplay();
             if (osc1 && osc2) {
-                osc2.frequency.value = tone2Freq; // Update live tone
+                osc2.frequency.value = tone2Freq;
             }
             document.querySelectorAll('.control-matrix button').forEach(btn => {
-                btn.disabled = false; // Enable control matrix
+                btn.disabled = false;
             });
             checkWin();
             console.log("Move made:", size, "New Tone 2 =", tone2Freq);
         }
 
         function adjustTone(action, size) {
-            if (!gameStarted) return; // Prevent adjustments before game starts
+            if (!gameStarted) return;
             const amount = randomRange(
                 size === 'Big' ? 6 : size === 'Medium' ? 2 : 1,
                 size === 'Big' ? 9 : size === 'Medium' ? 5 : 1
             );
             if (action === 'Keep Going') {
                 tone2Freq += (lastDirection === 'up' ? amount : -amount);
-            } else { // Turn Around
+            } else {
                 tone2Freq += (lastDirection === 'up' ? -amount : amount);
                 lastDirection = lastDirection === 'up' ? 'down' : 'up';
             }
-            tone2Freq = Math.round(tone2Freq * 10) / 10; // Round to 1 decimal
+            tone2Freq = Math.round(tone2Freq * 10) / 10;
             moveCount++;
             updateDisplay();
             if (osc1 && osc2) {
-                osc2.frequency.value = tone2Freq; // Update live tone
+                osc2.frequency.value = tone2Freq;
             }
             checkWin();
             console.log("Adjusted:", action, size, "New Tone 2 =", tone2Freq);
@@ -262,7 +316,7 @@
             disableControls(true);
             updateDisplay();
             messageDisplay.textContent = '';
-            setMode(); // Reset frequencies for next game
+            setMode();
             console.log("Game reset");
         }
 
@@ -272,7 +326,6 @@
         makeMoveBigBtn.addEventListener('click', () => makeMove('Big'));
         makeMoveMediumBtn.addEventListener('click', () => makeMove('Medium'));
         makeMoveTinyBtn.addEventListener('click', () => makeMove('Tiny'));
-
         document.getElementById('keepBig').addEventListener('click', () => adjustTone('Keep Going', "Big"));
         document.getElementById('keepMedium').addEventListener('click', () => adjustTone('Keep Going', "Medium"));
         document.getElementById('keepTiny').addEventListener('click', () => adjustTone('Keep Going', "Tiny"));
@@ -282,8 +335,8 @@
 
         // Initial Setup
         updateDisplay();
-        disableControls(true); // Disable all controls initially
-        setMode(); // Set initial mode
+        disableControls(true);
+        setMode();
     </script>
 </body>
 </html>
