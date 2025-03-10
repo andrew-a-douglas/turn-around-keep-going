@@ -121,7 +121,7 @@
     <button id="finish">Finished</button>
     <button id="reset">Reset / Stop Tones</button>
     <div>Best Score: <span id="bestScore">--</span></div>
-    <div>Official Score: <span id="officialScore">--</span></div> <!-- New Official Score display -->
+    <div>Official Score: <span id="officialScore">--</span></div> <!-- Official Score display -->
     <div id="scoreDetails"></div>
     <div id="message"></div>
 
@@ -137,8 +137,8 @@
             <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop the tones and start over.</li>
         </ul>
         <p><strong>Scoring:</strong> Your score is calculated as (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores are better—fewer moves, less time, and a smaller differential improve your score. Aim for the best score!</p>
+        <p><strong>Official Score:</strong> The average of your last 5 tuning attempt scores is displayed as the "Official Score."</p>
         <p><strong>Modes:</strong> Choose from "Tuning Two Tenors," "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" to adjust the base frequency range.</p>
-        <p><strong>Official Score:</strong> The average of your last 5 tuning attempts is displayed as the "Official Score."</p>
     </div>
 
     <script>
@@ -154,14 +154,14 @@
         let lastDirection = null;
         let bestScore = Infinity;
         let gameStarted = false;
-        let lastFiveScores = []; // Array to store the last 5 scores
+        let lastFiveScores = []; // Array to store the last 5 individual scores
 
         // DOM Elements
         const movesDisplay = document.getElementById('moves');
         const scoreDetailsDisplay = document.getElementById('scoreDetails');
         const messageDisplay = document.getElementById('message');
         const bestScoreDisplay = document.getElementById('bestScore');
-        const officialScoreDisplay = document.getElementById('officialScore'); // New DOM element
+        const officialScoreDisplay = document.getElementById('officialScore');
         const startGameBtn = document.getElementById('startGame');
         const resetBtn = document.getElementById('reset');
         const finishBtn = document.getElementById('finish');
@@ -177,6 +177,12 @@
 
         function updateDisplay() {
             movesDisplay.textContent = `Moves: ${moveCount}`;
+        }
+
+        function calculateAverage(scores) {
+            if (scores.length === 0) return "--";
+            const sum = scores.reduce((acc, score) => acc + parseFloat(score), 0);
+            return (sum / scores.length).toFixed(2);
         }
 
         function initAudioContext() {
@@ -233,12 +239,6 @@
             console.log("Mode set:", mode, "Base Freq =", baseFreq, "Target Freq =", targetFreq, "Initial Tone 2 =", tone2Freq);
         }
 
-        function calculateAverage(scores) {
-            if (scores.length === 0) return 0;
-            const sum = scores.reduce((acc, score) => acc + parseFloat(score), 0);
-            return (sum / scores.length).toFixed(2);
-        }
-
         function calculateScore() {
             const endTime = Date.now();
             const timeSeconds = Math.round((endTime - startTime) / 1000);
@@ -247,12 +247,12 @@
             scoreDetailsDisplay.textContent = `Moves: ${moveCount}, Time: ${timeSeconds}s, Differential: ${differential}Hz, Score: ${score}`;
 
             // Update last five scores
-            lastFiveScores.push(score);
+            lastFiveScores.push(parseFloat(score));
             if (lastFiveScores.length > 5) {
                 lastFiveScores.shift(); // Remove the oldest score if more than 5
             }
             const officialScore = calculateAverage(lastFiveScores);
-            officialScoreDisplay.textContent = officialScore || "--";
+            officialScoreDisplay.textContent = officialScore;
 
             // Update best score
             if (score < bestScore && score > 0) {
