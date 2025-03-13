@@ -13,7 +13,7 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Fixed syntax */
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
             padding: 20px;
             border: 2px solid red; /* Diagnostic: Should show a red border if CSS loads */
         }
@@ -78,7 +78,7 @@
             margin-top: 20px;
             text-align: center;
         }
-        select {
+        select, #volumeControl {
             padding: 12px;
             margin: 12px;
             font-size: 16px;
@@ -102,6 +102,7 @@
         <option value="bass">Tuning Tenor to Bass</option>
         <option value="chanter">Tuning Tenor to Chanter</option>
     </select>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
     <button id="startGame">Start Game</button>
     <div class="move-options">
         <button id="makeMoveBig">Make a Move Big</button>
@@ -121,7 +122,7 @@
     <button id="finish">Finished</button>
     <button id="reset">Reset / Stop Tones</button>
     <div>Best Score: <span id="bestScore">--</span></div>
-    <div>Official Score: <span id="officialScore">--</span></div> <!-- Official Score display -->
+    <div>Official Score: <span id="officialScore">--</span></div>
     <div id="scoreDetails"></div>
     <div id="message"></div>
 
@@ -145,7 +146,7 @@
         // Audio Context Setup
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
-        let osc1, osc2;
+        let osc1, osc2, gainNode; // Add gainNode for volume control
 
         // Game State
         let baseFreq, targetFreq, tone2Freq;
@@ -154,7 +155,7 @@
         let lastDirection = null;
         let bestScore = Infinity;
         let gameStarted = false;
-        let lastFiveScores = []; // Array to store the last 5 individual scores
+        let lastFiveScores = [];
 
         // DOM Elements
         const movesDisplay = document.getElementById('moves');
@@ -169,6 +170,7 @@
         const makeMoveMediumBtn = document.getElementById('makeMoveMedium');
         const makeMoveTinyBtn = document.getElementById('makeMoveTiny');
         const modeSelect = document.getElementById('modeSelect');
+        const volumeControl = document.getElementById('volumeControl');
 
         // Utility Functions
         function randomRange(min, max) {
@@ -188,13 +190,16 @@
         function initAudioContext() {
             if (!audioCtx) {
                 audioCtx = new AudioContext();
-                console.log("AudioContext initialized");
+                gainNode = audioCtx.createGain(); // Create gain node for volume control
+                gainNode.connect(audioCtx.destination); // Connect gain to output
+                console.log("AudioContext and GainNode initialized");
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume().then(() => {
                     console.log("AudioContext resumed");
                 });
             }
+            updateVolume(); // Apply initial volume
         }
 
         function playTones() {
@@ -206,8 +211,8 @@
             osc2.type = 'sine';
             osc1.frequency.value = baseFreq;
             osc2.frequency.value = tone2Freq;
-            osc1.connect(audioCtx.destination);
-            osc2.connect(audioCtx.destination);
+            osc1.connect(gainNode); // Connect oscillators to gain node
+            osc2.connect(gainNode);
             osc1.start();
             osc2.start();
             console.log("Tones playing: Base =", baseFreq, "Tone 2 =", tone2Freq);
@@ -219,6 +224,14 @@
             osc1 = null;
             osc2 = null;
             console.log("Tones stopped");
+        }
+
+        function updateVolume() {
+            if (gainNode) {
+                const volume = parseFloat(volumeControl.value);
+                gainNode.gain.value = volume; // Set gain value (0 to 1)
+                console.log("Volume set to:", volume);
+            }
         }
 
         function setMode() {
@@ -249,7 +262,7 @@
             // Update last five scores
             lastFiveScores.push(parseFloat(score));
             if (lastFiveScores.length > 5) {
-                lastFiveScores.shift(); // Remove the oldest score if more than 5
+                lastFiveScores.shift();
             }
             // Show Official Score only after 5 attempts
             const officialScore = lastFiveScores.length >= 5 ? calculateAverage(lastFiveScores) : "--";
@@ -387,6 +400,7 @@
         document.getElementById('turnBig').addEventListener('click', () => adjustTone('Turn Around', "Big"));
         document.getElementById('turnMedium').addEventListener('click', () => adjustTone('Turn Around', "Medium"));
         document.getElementById('turnTiny').addEventListener('click', () => adjustTone('Turn Around', "Tiny"));
+        volumeControl.addEventListener('input', updateVolume); // Update volume on slider change
 
         // Initial Setup
         updateDisplay();
@@ -395,6 +409,7 @@
         finishBtn.disabled = true;
         resetBtn.disabled = true;
         setMode();
+        updateVolume(); // Set initial volume
     </script>
 </body>
 </html>
