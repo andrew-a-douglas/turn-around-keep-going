@@ -13,7 +13,7 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Gradient like full game */
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
             padding: 20px;
             box-sizing: border-box;
             overflow: hidden;
@@ -79,7 +79,7 @@
             margin-top: 20px;
             text-align: center;
         }
-        select {
+        select, #volumeControl {
             padding: 12px;
             margin: 12px;
             font-size: 16px;
@@ -103,6 +103,7 @@
         <option value="bass">Tuning Tenor to Bass</option>
         <option value="chanter">Tuning Tenor to Chanter</option>
     </select>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
     <button id="startGame">Start Game</button>
     <div class="move-options">
         <button id="makeMoveBig">Make a Move Big</button>
@@ -139,7 +140,7 @@
     <script>
         // Audio Context Setup
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let osc1, osc2;
+        let osc1, osc2, gainNode; // Add gainNode for volume control
 
         // Game State
         let baseFreq = 440;
@@ -160,6 +161,7 @@
         const makeMoveMediumBtn = document.getElementById('makeMoveMedium');
         const makeMoveTinyBtn = document.getElementById('makeMoveTiny');
         const modeSelect = document.getElementById('modeSelect');
+        const volumeControl = document.getElementById('volumeControl');
 
         // Utility Functions
         function randomRange(min, max) {
@@ -178,8 +180,8 @@
             osc2.type = 'sine';
             osc1.frequency.value = baseFreq;
             osc2.frequency.value = tone2Freq;
-            osc1.connect(audioCtx.destination);
-            osc2.connect(audioCtx.destination);
+            osc1.connect(gainNode); // Connect oscillators to gain node
+            osc2.connect(gainNode);
             osc1.start();
             osc2.start();
             console.log("Tones playing: Base =", baseFreq, "Tone 2 =", tone2Freq);
@@ -191,6 +193,14 @@
             osc1 = null;
             osc2 = null;
             console.log("Tones stopped");
+        }
+
+        function updateVolume() {
+            if (gainNode) {
+                const volume = parseFloat(volumeControl.value);
+                gainNode.gain.value = volume; // Set gain value (0 to 1)
+                console.log("Volume set to:", volume);
+            }
         }
 
         function setMode() {
@@ -254,6 +264,9 @@
 
         // Game Logic
         function startGame() {
+            gainNode = audioCtx.createGain(); // Initialize gain node when starting the game
+            gainNode.connect(audioCtx.destination); // Connect gain to output
+            updateVolume(); // Apply initial volume
             setMode();
             playTones();
             gameStarted = true;
@@ -332,6 +345,7 @@
         document.getElementById('turnBig').addEventListener('click', () => adjustTone('Turn Around', "Big"));
         document.getElementById('turnMedium').addEventListener('click', () => adjustTone('Turn Around', "Medium"));
         document.getElementById('turnTiny').addEventListener('click', () => adjustTone('Turn Around', "Tiny"));
+        volumeControl.addEventListener('input', updateVolume); // Update volume on slider change
 
         // Initial Setup
         updateDisplay();
