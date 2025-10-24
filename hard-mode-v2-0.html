@@ -273,7 +273,6 @@
             <div>Official Score: <span id="officialScore">--</span></div>
             <div id="scoreDetails"></div>
             <div id="message"></div>
-            
         </div>
     </div>
     <div id="how-to-play">
@@ -286,9 +285,9 @@
                 <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
                 <li><strong>Adjust Pitch:</strong> Click any of the 8 buttons in the vertical stack. Green ↑ buttons raise the pitch, red ↓ buttons lower it. Each move applies a <em>random</em> adjustment within the size range:<br>
                     • Big: 3.01–6.00 Hz (darkest)<br>
-                    • Medium: 1.01–3.00 Hz<br>
-                    • Small: 0.51–1.00 Hz<br>
-                    • Tiny: 0.00–0.50 Hz (lightest)
+                    • Medium: 0.51–3.00 Hz<br>
+                    • Small: 0.26–0.50 Hz<br>
+                    • Tiny: 0.00–0.25 Hz (lightest)
                 </li>
                 <li><strong>All Available:</strong> Every button works from the first move—no separate phases.</li>
                 <li><strong>Listen:</strong> The beating slows as tones match (differential nears 0 Hz).</li>
@@ -316,9 +315,9 @@
         let lastFiveScores = [];
         const moveRanges = {
             big: [3.01, 6.00],
-            medium: [1.01, 3.00],
-            small: [0.51, 1.00],
-            tiny: [0.00, 0.50]
+            medium: [0.51, 3.00],
+            small: [0.26, 0.50],
+            tiny: [0.00, 0.25]
         };
 
         // DOM Elements
