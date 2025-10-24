@@ -7,15 +7,21 @@
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-            padding: 10px;
-            border: 2px solid red; /* Diagnostic: Should show a red border if CSS loads */
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A5C2B;
+            margin: 10px 0 20px;
+            text-align: center;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         button {
             padding: 8px 16px;
@@ -46,7 +52,6 @@
         /* Control Buttons (Black) */
         #startGame, #finish, #reset {
             background-color: #000000;
-            max-width: 160px;
             margin: 4px 0;
         }
         /* Vertical Moves */
@@ -66,12 +71,38 @@
             background: #999;
             margin: 4px 0;
         }
-        .up-btn {
-            background-color: #28A745; /* Green for up */
+        /* Up Buttons (Green-based) */
+        #bigUp {
+            background-color: #1A5C2B; /* Dark green for big up */
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
-        .down-btn {
-            background-color: #DC3545; /* Red for down */
+        #mediumUp {
+            background-color: #2A8B44; /* Medium green */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        #smallUp {
+            background-color: #4CAF50; /* Light green */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        #tinyUp {
+            background-color: #A5D6A7; /* Pale green */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        /* Down Buttons (Red-based) */
+        #tinyDown {
+            background-color: #FFCDD2; /* Pale red for tiny down */
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        #smallDown {
+            background-color: #EF5350; /* Light red */
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        #mediumDown {
+            background-color: #C62828; /* Medium red */
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        #bigDown {
+            background-color: #8B1A1A; /* Dark red */
             border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
         .vertical-moves button {
@@ -93,12 +124,12 @@
         #message {
             font-size: 14px;
             color: #444;
-            margin-top: 8px;
+            margin: 8px 0;
             text-align: center;
         }
         select, #volumeControl {
             padding: 8px;
-            margin: 4px;
+            margin: 4px 0;
             font-size: 14px;
             border-radius: 4px;
             border: 1px solid #ccc;
@@ -111,55 +142,156 @@
             font-weight: bold;
             color: #007BFF;
         }
+        /* Accordion for How to Play */
+        #how-to-play {
+            width: 100%;
+            max-width: 300px;
+            margin: 8px 0;
+        }
+        #how-to-play-toggle {
+            background-color: #1A5C2B;
+            color: white;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #how-to-play-toggle:hover {
+            background-color: #2A8B44;
+        }
+        #how-to-play-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 0 0 4px 4px;
+            padding: 0 12px;
+        }
+        #how-to-play-content.expanded {
+            max-height: 400px;
+            padding: 12px;
+        }
+        #how-to-play-content h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #000;
+        }
+        #how-to-play-content ul {
+            margin-left: 15px;
+            font-size: 14px;
+        }
+        /* Desktop Layout (wider screens) */
+        @media (min-width: 769px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+            .content-wrapper {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: flex-start;
+                width: 100%;
+                max-width: 700px;
+                gap: 30px;
+            }
+            .main-controls {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                max-width: 200px;
+            }
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                max-width: 300px;
+            }
+            h1 {
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+        }
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            .sidebar {
+                width: 100%;
+                max-width: 600px;
+                text-align: center;
+            }
+            #how-to-play, #how-to-play-toggle {
+                max-width: 600px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="moves">Moves: 0</div>
-    <select id="modeSelect">
-        <option value="tenors">Tuning Two Tenors</option>
-        <option value="bass">Tuning Tenor to Bass</option>
-        <option value="chanter">Tuning Tenor to Chanter</option>
-    </select>
-    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
-    <button id="startGame">Start Game</button>
-    <div class="vertical-moves">
-        <button id="bigUp" class="up-btn">Big ↑</button>
-        <button id="mediumUp" class="up-btn">Medium ↑</button>
-        <button id="smallUp" class="up-btn">Small ↑</button>
-        <button id="tinyUp" class="up-btn">Tiny ↑</button>
-        <hr class="separator">
-        <button id="tinyDown" class="down-btn">Tiny ↓</button>
-        <button id="smallDown" class="down-btn">Small ↓</button>
-        <button id="mediumDown" class="down-btn">Medium ↓</button>
-        <button id="bigDown" class="down-btn">Big ↓</button>
-    </div>
-    <button id="finish">Finished</button>
-    <button id="reset">Reset / Stop Tones</button>
-    <div>Best Score: <span id="bestScore">--</span></div>
-    <div>Official Score: <span id="officialScore">--</span></div>
-    <div id="scoreDetails"></div>
-    <div id="message"></div>
-
-    <div id="how-to-play" style="margin-top: 20px; padding: 12px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; max-width: 600px; text-align: left; color: #333;">
-        <h2 style="font-size: 20px; margin-bottom: 10px; color: #000;">How to Play</h2>
-        <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch up (↑) or down (↓) using the vertical controls. Minimize the frequency differential with the fewest moves and shortest time.</p>
-        <p><strong>Gameplay:</strong></p>
-        <ul style="list-style-type: disc; margin-left: 15px;">
-            <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
-            <li><strong>Adjust Pitch:</strong> Click any of the 8 buttons in the vertical stack. Green ↑ buttons raise the pitch, red ↓ buttons lower it. Each move applies a <em>random</em> adjustment within the size range:<br>
-                • Big: 3.01–6.00 Hz<br>
-                • Medium: 1.01–3.00 Hz<br>
-                • Small: 0.51–1.00 Hz<br>
-                • Tiny: 0.00–0.50 Hz
-            </li>
-            <li><strong>All Available:</strong> Every button works from the first move—no separate phases.</li>
-            <li><strong>Listen:</strong> The beating slows as tones match (differential nears 0 Hz).</li>
-            <li><strong>Finish:</strong> Click "Finished" when you believe the tones match. Score calculated.</li>
-            <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop tones and reset.</li>
-        </ul>
-        <p><strong>Scoring:</strong> (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores better—fewer moves, less time, smaller differential.</p>
-        <p><strong>Official Score:</strong> Average of your last 5 scores (after 5+ attempts).</p>
-        <p><strong>Modes:</strong> "Tuning Two Tenors" (similar pitches), "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" (octave down).</p>
+    <h1>The Tuning Game by Andrew Douglas</h1>
+    <div class="content-wrapper">
+        <div class="main-controls">
+            <div id="moves">Moves: 0</div>
+            <div class="vertical-moves">
+                <button id="bigUp">Big ↑</button>
+                <button id="mediumUp">Medium ↑</button>
+                <button id="smallUp">Small ↑</button>
+                <button id="tinyUp">Tiny ↑</button>
+                <hr class="separator">
+                <button id="tinyDown">Tiny ↓</button>
+                <button id="smallDown">Small ↓</button>
+                <button id="mediumDown">Medium ↓</button>
+                <button id="bigDown">Big ↓</button>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div>Best Score: <span id="bestScore">--</span></div>
+            <div>Official Score: <span id="officialScore">--</span></div>
+            <div id="scoreDetails"></div>
+            <div id="message"></div>
+            <select id="modeSelect">
+                <option value="tenors">Tuning Two Tenors</option>
+                <option value="bass">Tuning Tenor to Bass</option>
+                <option value="chanter">Tuning Tenor to Chanter</option>
+            </select>
+            <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
+            <button id="startGame">Start Game</button>
+            <button id="finish">Finished</button>
+            <button id="reset">Reset / Stop Tones</button>
+            <div id="how-to-play">
+                <button id="how-to-play-toggle">How to Play</button>
+                <div id="how-to-play-content">
+                    <h2>How to Play</h2>
+                    <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch up (↑) or down (↓) using the vertical controls. Minimize the frequency differential with the fewest moves and shortest time.</p>
+                    <p><strong>Gameplay:</strong></p>
+                    <ul style="list-style-type: disc;">
+                        <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
+                        <li><strong>Adjust Pitch:</strong> Click any of the 8 buttons in the vertical stack. Green ↑ buttons raise the pitch, red ↓ buttons lower it. Each move applies a <em>random</em> adjustment within the size range:<br>
+                            • Big: 3.01–6.00 Hz (darkest)<br>
+                            • Medium: 1.01–3.00 Hz<br>
+                            • Small: 0.51–1.00 Hz<br>
+                            • Tiny: 0.00–0.50 Hz (lightest)
+                        </li>
+                        <li><strong>All Available:</strong> Every button works from the first move—no separate phases.</li>
+                        <li><strong>Listen:</strong> The beating slows as tones match (differential nears 0 Hz).</li>
+                        <li><strong>Finish:</strong> Click "Finished" when you believe the tones match. Score calculated.</li>
+                        <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop tones and reset.</li>
+                    </ul>
+                    <p><strong>Scoring:</strong> (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores better—fewer moves, less time, smaller differential.</p>
+                    <p><strong>Official Score:</strong> Average of your last 5 scores (after 5+ attempts).</p>
+                    <p><strong>Modes:</strong> "Tuning Two Tenors" (similar pitches), "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" (octave down).</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -193,6 +325,8 @@
         const finishBtn = document.getElementById('finish');
         const modeSelect = document.getElementById('modeSelect');
         const volumeControl = document.getElementById('volumeControl');
+        const howToPlayToggle = document.getElementById('how-to-play-toggle');
+        const howToPlayContent = document.getElementById('how-to-play-content');
 
         // Utility Functions
         function randomRange(min, max) {
@@ -350,6 +484,12 @@
             scoreDetailsDisplay.textContent = '';
             console.log("Game reset");
         }
+
+        // Accordion Toggle
+        howToPlayToggle.addEventListener('click', () => {
+            howToPlayContent.classList.toggle('expanded');
+            howToPlayToggle.textContent = howToPlayContent.classList.contains('expanded') ? 'Hide Instructions' : 'How to Play';
+        });
 
         // Event Listeners
         startGameBtn.addEventListener('click', startGame);
