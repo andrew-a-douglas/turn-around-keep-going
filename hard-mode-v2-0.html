@@ -16,7 +16,7 @@
             align-items: center;
         }
         h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             color: #1A5C2B;
             margin: 10px 0 20px;
@@ -24,22 +24,22 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         button {
-            padding: 8px 16px;
+            padding: 12px 20px;
             margin: 0;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 500;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             width: 100%;
-            max-width: 160px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            max-width: 200px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         button:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
         }
         button:active:not(:disabled) {
             transform: translateY(0);
@@ -52,7 +52,7 @@
         /* Control Buttons (Black) */
         #startGame, #finish, #reset {
             background-color: #000000;
-            margin: 4px 0;
+            margin: 6px 0;
         }
         /* Vertical Moves */
         .vertical-moves {
@@ -61,15 +61,15 @@
             align-items: center;
             gap: 0;
             width: 100%;
-            max-width: 160px;
-            margin: 8px 0;
+            max-width: 200px;
+            margin: 10px 0;
         }
         .vertical-moves hr.separator {
             width: 100%;
             height: 2px;
             border: none;
             background: #999;
-            margin: 4px 0;
+            margin: 6px 0;
         }
         /* Up Buttons (Green-based) */
         #bigUp {
@@ -109,32 +109,32 @@
             border-radius: 0;
         }
         .vertical-moves button:first-child {
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
         }
         .vertical-moves button:last-child {
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
         }
         #moves, #scoreDetails {
-            font-size: 16px;
-            margin: 8px 0;
+            font-size: 18px;
+            margin: 10px 0;
             color: #333;
         }
         #message {
-            font-size: 14px;
+            font-size: 16px;
             color: #444;
-            margin: 8px 0;
+            margin: 10px 0;
             text-align: center;
         }
         select, #volumeControl {
-            padding: 8px;
-            margin: 4px 0;
-            font-size: 14px;
-            border-radius: 4px;
+            padding: 10px;
+            margin: 6px 0;
+            font-size: 16px;
+            border-radius: 6px;
             border: 1px solid #ccc;
             width: 100%;
-            max-width: 160px;
+            max-width: 200px;
             background-color: white;
             color: #333;
         }
@@ -145,18 +145,18 @@
         /* Accordion for How to Play */
         #how-to-play {
             width: 100%;
-            max-width: 300px;
-            margin: 8px 0;
+            max-width: 600px;
+            margin: 10px 0;
         }
         #how-to-play-toggle {
             background-color: #1A5C2B;
             color: white;
-            padding: 8px;
+            padding: 12px 20px;
             font-size: 16px;
             width: 100%;
-            max-width: 300px;
+            max-width: 600px;
             text-align: left;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
         }
         #how-to-play-toggle:hover {
@@ -164,25 +164,25 @@
         }
         #how-to-play-content {
             max-height: 0;
-            overflow: hidden;
+            overflow-y: auto;
             transition: max-height 0.3s ease-out;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
-            border-radius: 0 0 4px 4px;
+            border-radius: 0 0 6px 6px;
             padding: 0 12px;
         }
         #how-to-play-content.expanded {
-            max-height: 400px;
+            max-height: 500px;
             padding: 12px;
         }
         #how-to-play-content h2 {
-            font-size: 18px;
-            margin-bottom: 8px;
+            font-size: 20px;
+            margin-bottom: 10px;
             color: #000;
         }
         #how-to-play-content ul {
             margin-left: 15px;
-            font-size: 14px;
+            font-size: 16px;
         }
         /* Desktop Layout (wider screens) */
         @media (min-width: 769px) {
@@ -197,24 +197,28 @@
                 justify-content: center;
                 align-items: flex-start;
                 width: 100%;
-                max-width: 700px;
-                gap: 30px;
+                max-width: 800px;
+                gap: 40px;
+                margin-bottom: 20px;
             }
             .main-controls {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                max-width: 200px;
+                max-width: 220px;
             }
             .sidebar {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
-                max-width: 300px;
+                max-width: 320px;
             }
             h1 {
-                font-size: 32px;
+                font-size: 36px;
                 margin-bottom: 20px;
+            }
+            #how-to-play {
+                align-self: center;
             }
         }
         /* Mobile Layout */
@@ -264,34 +268,36 @@
             <button id="startGame">Start Game</button>
             <button id="finish">Finished</button>
             <button id="reset">Reset / Stop Tones</button>
+
             <div>Best Score: <span id="bestScore">--</span></div>
             <div>Official Score: <span id="officialScore">--</span></div>
             <div id="scoreDetails"></div>
             <div id="message"></div>
-            <div id="how-to-play">
-                <button id="how-to-play-toggle">How to Play</button>
-                <div id="how-to-play-content">
-                    <h2>How to Play</h2>
-                    <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch up (↑) or down (↓) using the vertical controls. Minimize the frequency differential with the fewest moves and shortest time.</p>
-                    <p><strong>Gameplay:</strong></p>
-                    <ul style="list-style-type: disc;">
-                        <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
-                        <li><strong>Adjust Pitch:</strong> Click any of the 8 buttons in the vertical stack. Green ↑ buttons raise the pitch, red ↓ buttons lower it. Each move applies a <em>random</em> adjustment within the size range:<br>
-                            • Big: 3.01–6.00 Hz (darkest)<br>
-                            • Medium: 1.01–3.00 Hz<br>
-                            • Small: 0.51–1.00 Hz<br>
-                            • Tiny: 0.00–0.50 Hz (lightest)
-                        </li>
-                        <li><strong>All Available:</strong> Every button works from the first move—no separate phases.</li>
-                        <li><strong>Listen:</strong> The beating slows as tones match (differential nears 0 Hz).</li>
-                        <li><strong>Finish:</strong> Click "Finished" when you believe the tones match. Score calculated.</li>
-                        <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop tones and reset.</li>
-                    </ul>
-                    <p><strong>Scoring:</strong> (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores better—fewer moves, less time, smaller differential.</p>
-                    <p><strong>Official Score:</strong> Average of your last 5 scores (after 5+ attempts).</p>
-                    <p><strong>Modes:</strong> "Tuning Two Tenors" (similar pitches), "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" (octave down).</p>
-                </div>
-            </div>
+            
+        </div>
+    </div>
+    <div id="how-to-play">
+        <button id="how-to-play-toggle">How to Play</button>
+        <div id="how-to-play-content">
+            <h2>How to Play</h2>
+            <p><strong>Objective:</strong> Tune the second tone to match the base frequency by adjusting its pitch up (↑) or down (↓) using the vertical controls. Minimize the frequency differential with the fewest moves and shortest time.</p>
+            <p><strong>Gameplay:</strong></p>
+            <ul style="list-style-type: disc;">
+                <li><strong>Start Game:</strong> Click "Start Game" to begin. Two tones will play: a base tone and a second tone to adjust.</li>
+                <li><strong>Adjust Pitch:</strong> Click any of the 8 buttons in the vertical stack. Green ↑ buttons raise the pitch, red ↓ buttons lower it. Each move applies a <em>random</em> adjustment within the size range:<br>
+                    • Big: 3.01–6.00 Hz (darkest)<br>
+                    • Medium: 1.01–3.00 Hz<br>
+                    • Small: 0.51–1.00 Hz<br>
+                    • Tiny: 0.00–0.50 Hz (lightest)
+                </li>
+                <li><strong>All Available:</strong> Every button works from the first move—no separate phases.</li>
+                <li><strong>Listen:</strong> The beating slows as tones match (differential nears 0 Hz).</li>
+                <li><strong>Finish:</strong> Click "Finished" when you believe the tones match. Score calculated.</li>
+                <li><strong>Reset:</strong> Click "Reset / Stop Tones" to stop tones and reset.</li>
+            </ul>
+            <p><strong>Scoring:</strong> (Moves + Time in Seconds) × Frequency Differential (Hz). Lower scores better—fewer moves, less time, smaller differential.</p>
+            <p><strong>Official Score:</strong> Average of your last 5 scores (after 5+ attempts).</p>
+            <p><strong>Modes:</strong> "Tuning Two Tenors" (similar pitches), "Tuning Tenor to Bass," or "Tuning Tenor to Chanter" (octave down).</p>
         </div>
     </div>
 
